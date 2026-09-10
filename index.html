@@ -24,20 +24,28 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10p
 .form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.area{min-height:95px;resize:vertical}.full{grid-column:1/-1}.notice{padding:13px 15px;border-radius:13px;background:var(--soft);color:#50568b;margin-bottom:17px;line-height:1.45}
 .quiz{max-width:750px;margin:auto}.quiz h2{text-align:center}.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.choice{border:1px solid var(--line);background:white;border-radius:14px;padding:16px;text-align:left;font-weight:750}.choice:hover{border-color:var(--primary);background:var(--soft)}.choice.correct{background:var(--greenbg);border-color:#b9ead5}.choice.wrong{background:var(--redbg);border-color:#f1c1c7}.quiz-score{text-align:center;color:var(--muted);font-weight:750}
 .empty{text-align:center;color:var(--muted);padding:40px}
+
+/* Night learning theme */
+body.dark{--bg:#0b1020;--surface:#12192b;--ink:#f4f6ff;--muted:#a8b1c7;--line:#27324a;--soft:#20294a;--greenbg:#103326;--redbg:#351b24;--shadow:0 22px 65px rgba(0,0,0,.32);background:radial-gradient(circle at 15% 0%,#24204e 0,transparent 30%),radial-gradient(circle at 90% 20%,#102e42 0,transparent 24%),var(--bg)}
+body.dark .top{background:rgba(11,16,32,.82)}body.dark .card-inner{background:linear-gradient(145deg,#151d32,#101728);border-color:#2c3853}body.dark .example{background:#0d1425}body.dark .input,body.dark .select,body.dark .area,body.dark .choice{background:#0f1628;color:var(--ink);border-color:#2b3750}body.dark .secondary{background:#20283a;color:var(--ink)}
+.theme-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:42px;height:42px;border-radius:13px;font-size:19px;box-shadow:var(--shadow)}
+.settings{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.voice-select{max-width:330px}.voice-label{font-size:13px;color:var(--muted);font-weight:750}
+
 @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.nav{align-items:flex-start}.navlinks{overflow:auto;max-width:70vw}.word{font-size:43px}.card-inner{min-height:320px;padding:25px}.form,.choices{grid-template-columns:1fr}th:nth-child(2),td:nth-child(2){display:none}
 </style>
 </head>
 <body>
 <header class="top"><div class="nav">
 <div class="brand">English <i>Coach</i> ✨</div>
-<div class="navlinks">
+<div style="display:flex;align-items:center;gap:8px"><div class="navlinks">
 <button class="navbtn active" data-view="review">Review</button><button class="navbtn" data-view="quiz">Quiz</button><button class="navbtn" data-view="words">My Words</button><button class="navbtn" data-view="add">Add Word</button>
 <button class="navbtn" data-view="settings">⚙️</button>
-</div></div></header>
+</div><button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode">🌙</button></div></div></header>
 <main>
 <section id="review" class="view active">
 <div class="hero"><div><h1>Ready to level up? 🚀</h1><p>Your daily vocabulary practice, one card at a time.</p></div><div class="streak">🔥 <b id="streak">0</b> day streak</div></div>
 <div class="stats" id="stats"></div>
+<div class="settings"><span class="voice-label">🎙️ Voice:</span><select class="select voice-select" id="voiceSelect"><option value="">Loading voices…</option></select><span class="voice-label">Speed</span><select class="select" id="rateSelect"><option value="0.78">Slow</option><option value="0.88" selected>Natural</option><option value="1">Fast</option></select></div>
 <div class="panel">
 <div id="reviewArea">
 <div class="review-top"><span id="counter">0 cards due</span><span id="goalText">Daily goal: 10</span></div><div class="progress"><i id="progress"></i></div>
@@ -175,7 +183,25 @@ function grade(level){
  if(level==="easy"){w.known++;w.ease=Math.min(3,w.ease+.1);w.interval=w.interval?Math.max(2,Math.round(w.interval*w.ease)):2;w.due=now+w.interval*86400000}
  save();sessionDone++;pos++;renderStats();showCard();
 }
-function speak(text){if("speechSynthesis"in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);let v=voices.find(x=>x.name===selectedVoiceName);if(v)u.voice=v;u.lang=v?.lang||"en-CA";u.rate=speechRate;u.pitch=speechPitch;speechSynthesis.speak(u)}}
+let availableVoices=[];
+function loadVoices(){
+ if(!('speechSynthesis' in window))return;
+ availableVoices=speechSynthesis.getVoices().filter(v=>/^en(-|_)/i.test(v.lang));
+ const select=document.getElementById('voiceSelect'); if(!select)return;
+ const saved=localStorage.getItem('englishCoachVoice')||'';
+ select.innerHTML=availableVoices.length?availableVoices.map((v,i)=>`<option value="${i}" ${String(i)===saved?'selected':''}>${v.name} — ${v.lang}${/enhanced|premium|natural|siri/i.test(v.name)?' ✨':''}</option>`).join(''):'<option value="">Default browser voice</option>';
+}
+function speak(text){
+ if(!('speechSynthesis' in window)){alert('Speech is not available in this browser.');return}
+ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang='en-CA';
+ const i=Number(document.getElementById('voiceSelect')?.value); if(Number.isInteger(i)&&availableVoices[i])u.voice=availableVoices[i];
+ u.rate=Number(document.getElementById('rateSelect')?.value||.88); u.pitch=.95; speechSynthesis.speak(u)
+}
+if('speechSynthesis' in window){loadVoices(); speechSynthesis.onvoiceschanged=loadVoices}
+document.getElementById('voiceSelect').onchange=e=>localStorage.setItem('englishCoachVoice',e.target.value);
+document.getElementById('rateSelect').onchange=()=>localStorage.setItem('englishCoachRate',document.getElementById('rateSelect').value);
+const savedRate=localStorage.getItem('englishCoachRate'); if(savedRate)document.getElementById('rateSelect').value=savedRate;
+
 document.getElementById("card").onclick=e=>{if(!e.target.closest("button"))reveal()};
 document.getElementById("speakFront").onclick=e=>{e.stopPropagation();speak(queue[pos]?.word||"")};
 document.getElementById("speakBack").onclick=e=>{e.stopPropagation();speak(queue[pos]?.example||"")};
@@ -211,6 +237,10 @@ document.getElementById("pitch").oninput=e=>document.getElementById("pitchValue"
 document.getElementById("testVoice").onclick=()=>{applyVoiceSettings();speak("Meticulous. She is meticulous when reviewing research papers.");};
 document.getElementById("saveSettings").onclick=()=>{applyVoiceSettings();let g=Math.max(5,Math.min(50,+document.getElementById("dailyGoal").value||10));localStorage.setItem("englishCoachGoal",g);alert("Settings saved ✨");};
 if("speechSynthesis"in window){speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}
+const savedTheme=localStorage.getItem('englishCoachTheme')||'dark';
+function applyTheme(){const dark=document.body.classList.toggle('dark',savedTheme==='dark');document.getElementById('themeBtn').textContent=dark?'☀️':'🌙'}
+applyTheme();
+document.getElementById('themeBtn').onclick=()=>{const dark=!document.body.classList.contains('dark');document.body.classList.toggle('dark',dark);localStorage.setItem('englishCoachTheme',dark?'dark':'light');document.getElementById('themeBtn').textContent=dark?'☀️':'🌙'};
 renderStats();updateStreak();startSession();
 </script>
 </body></html>

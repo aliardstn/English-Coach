@@ -124,7 +124,7 @@ let queue=[],pos=0,revealed=false,sessionDone=0,quizScore=0,quizCount=0;
 let selectedVoiceName=localStorage.getItem("englishCoachVoice")||"";
 let speechRate=+(localStorage.getItem("englishCoachRate")||".88");
 let speechPitch=+(localStorage.getItem("englishCoachPitch")||".95");
-let elevenVoiceId=localStorage.getItem("englishCoachElevenVoiceId")||"1SM7GgM6IMuvQlz2BwM3";
+let elevenVoiceId=(localStorage.getItem("englishCoachElevenVoiceId")&&localStorage.getItem("englishCoachElevenVoiceId")!=="1SM7GgM6IMuvQlz2BwM3"?localStorage.getItem("englishCoachElevenVoiceId"):"rsMwNQrvMR1sC0YMsK2a");
 let elevenModel=localStorage.getItem("englishCoachElevenModel")||"eleven_multilingual_v2";
 let humanVoiceEnabled=localStorage.getItem("englishCoachHumanVoice")!=="off";
 let currentAudio=null;

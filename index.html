@@ -24,7 +24,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10p
 .form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.area{min-height:95px;resize:vertical}.full{grid-column:1/-1}.notice{padding:13px 15px;border-radius:13px;background:var(--soft);color:#50568b;margin-bottom:17px;line-height:1.45}
 .quiz{max-width:750px;margin:auto}.quiz h2{text-align:center}.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}.choice{border:1px solid var(--line);background:white;border-radius:14px;padding:16px;text-align:left;font-weight:750}.choice:hover{border-color:var(--primary);background:var(--soft)}.choice.correct{background:var(--greenbg);border-color:#b9ead5}.choice.wrong{background:var(--redbg);border-color:#f1c1c7}.quiz-score{text-align:center;color:var(--muted);font-weight:750}
 .empty{text-align:center;color:var(--muted);padding:40px}
-@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.nav{align-items:flex-start}.navlinks{overflow:auto;max-width:70vw}.word{font-size:43px}.card-inner{min-height:320px;padding:25px}.form,.choices{grid-template-columns:1fr}th:nth-child(2),td:nth-child(2){display:none}}
+@media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.nav{align-items:flex-start}.navlinks{overflow:auto;max-width:70vw}.word{font-size:43px}.card-inner{min-height:320px;padding:25px}.form,.choices{grid-template-columns:1fr}th:nth-child(2),td:nth-child(2){display:none}
 </style>
 </head>
 <body>
@@ -110,13 +110,14 @@ function addBulkWords(){
  save();
 }
 
-words=words.map(w=>({seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0,...w}));\naddBulkWords();
+words=words.map(w=>({seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0,...w}));
+addBulkWords();
 let queue=[],pos=0,revealed=false,sessionDone=0,quizScore=0,quizCount=0;
 let voices=[], selectedVoiceName=localStorage.getItem("englishCoachVoice")||"", speechRate=+(localStorage.getItem("englishCoachRate")||".88"), speechPitch=+(localStorage.getItem("englishCoachPitch")||".95");
-async function hydrateWord(w){{
+async function hydrateWord(w){
  if(!w || w.meaning || w.apiLoaded) return;
  w.apiLoaded=true; save();
- try{{
+ try{
    const r=await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w.word));
    if(!r.ok) throw new Error("lookup");
    const data=await r.json(), entry=data[0], meanings=entry.meanings||[];
@@ -129,19 +130,19 @@ async function hydrateWord(w){{
    save();
    if(queue[pos]===w) showCard();
    renderStats();
- }}catch(e){{w.meaning="Definition will be added when an internet connection is available.";w.example="Try using this word in a sentence of your own.";save();if(queue[pos]===w)showCard();}}
-}}
-function loadVoices(){{
+ }catch(e){w.meaning="Definition will be added when an internet connection is available.";w.example="Try using this word in a sentence of your own.";save();if(queue[pos]===w)showCard();}
+}
+function loadVoices(){
  voices=speechSynthesis.getVoices().filter(v=>/^en(-|_)/i.test(v.lang));
  const sel=document.getElementById("voiceSelect"); if(!sel)return;
- sel.innerHTML=voices.length?voices.map(v=>`<option value="${{v.name}}">${{v.name}} — ${{v.lang}}</option>`).join(""):'<option>No English voices detected</option>';
+ sel.innerHTML=voices.length?voices.map(v=>`<option value="${v.name}">${v.name} — ${v.lang}</option>`).join(""):'<option>No English voices detected</option>';
  if(selectedVoiceName && voices.some(v=>v.name===selectedVoiceName))sel.value=selectedVoiceName;
-}}
-function applyVoiceSettings(){{
+}
+function applyVoiceSettings(){
  speechRate=+document.getElementById("rate").value;speechPitch=+document.getElementById("pitch").value;
  localStorage.setItem("englishCoachRate",speechRate);localStorage.setItem("englishCoachPitch",speechPitch);
- const s=document.getElementById("voiceSelect");if(s){{selectedVoiceName=s.value||"";localStorage.setItem("englishCoachVoice",selectedVoiceName)}}
-}}
+ const s=document.getElementById("voiceSelect");if(s){selectedVoiceName=s.value||"";localStorage.setItem("englishCoachVoice",selectedVoiceName)}
+}
 
 
 function save(){localStorage.setItem("englishCoachWords",JSON.stringify(words))}
@@ -209,7 +210,7 @@ document.getElementById("rate").oninput=e=>document.getElementById("rateValue").
 document.getElementById("pitch").oninput=e=>document.getElementById("pitchValue").textContent=(+e.target.value).toFixed(2);
 document.getElementById("testVoice").onclick=()=>{applyVoiceSettings();speak("Meticulous. She is meticulous when reviewing research papers.");};
 document.getElementById("saveSettings").onclick=()=>{applyVoiceSettings();let g=Math.max(5,Math.min(50,+document.getElementById("dailyGoal").value||10));localStorage.setItem("englishCoachGoal",g);alert("Settings saved ✨");};
-if("speechSynthesis"in window){{speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}}
+if("speechSynthesis"in window){speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}
 renderStats();updateStreak();startSession();
 </script>
 </body></html>

@@ -16,7 +16,7 @@ main{max-width:1100px;margin:auto;padding:30px 20px 70px}.view{display:none}.vie
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:17px;padding:17px;box-shadow:var(--shadow)}.stat b{font-size:28px;display:block}.stat small{color:var(--muted);font-weight:650}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:23px;padding:24px;box-shadow:var(--shadow)}
 .review-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted);font-weight:700}.progress{height:8px;background:#eceef5;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--primary2));border-radius:99px;transition:width .3s}
-.card{min-height:380px;margin-top:18px;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;perspective:1000px}.card-inner{width:100%;max-width:780px;min-height:340px;background:linear-gradient(145deg,#fff,#f8f9ff);border:1px solid var(--line);border-radius:28px;padding:35px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 22px 60px rgba(48,54,105,.12);transition:transform .25s}.card-inner:hover{transform:translateY(-2px)}.badge{font-size:13px;font-weight:850;color:var(--primary);background:var(--soft);padding:6px 10px;border-radius:99px}.word{font-size:58px;font-weight:950;letter-spacing:-2px;margin:15px 0 4px}.tap{color:var(--muted);margin-top:15px}.answer{display:none;width:100%;max-width:620px}.answer.show{display:block}.meaning{font-size:22px;font-weight:750;margin:14px 0 8px}.persian{font-size:19px}.example{margin:18px 0 0;padding:15px 18px;background:#f1f3fa;border-radius:15px;text-align:left;line-height:1.55}.example strong{color:var(--primary)}.pronounce{border:0;background:var(--soft);color:var(--primary);padding:9px 13px;border-radius:11px;font-weight:800;margin-top:12px}
+.card{min-height:380px;margin-top:18px;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;perspective:1000px}.card-inner{width:100%;max-width:780px;min-height:340px;background:linear-gradient(145deg,#fff,#f8f9ff);border:1px solid var(--line);border-radius:28px;padding:35px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 22px 60px rgba(48,54,105,.12);transition:transform .25s}.card-inner:hover{transform:translateY(-2px)}.badge{font-size:13px;font-weight:850;color:var(--primary);background:var(--soft);padding:6px 10px;border-radius:99px}.word{font-size:58px;font-weight:950;letter-spacing:-2px;margin:15px 0 4px}.tap{color:var(--muted);margin-top:15px}.answer{display:none;width:100%;max-width:620px}.answer.show{display:block}.meaning{font-size:22px;font-weight:750;margin:14px 0 8px}.persian{font-size:19px}.example{margin:18px 0 0;padding:15px 18px;background:#f1f3fa;border-radius:15px;text-align:left;line-height:1.55}.example strong{color:var(--primary)}.retry-meaning{margin-top:10px}.pronounce{border:0;background:var(--soft);color:var(--primary);padding:9px 13px;border-radius:11px;font-weight:800;margin-top:12px}
 .actions{display:flex;justify-content:center;gap:12px;margin-top:17px}.btn{border:0;border-radius:13px;padding:12px 18px;font-weight:850}.primary{background:var(--primary);color:white}.secondary{background:#eef0f5;color:var(--ink)}.good{background:var(--greenbg);color:var(--green)}.bad{background:var(--redbg);color:var(--red)}.hard{background:#fff5df;color:#a96800}
 .done{text-align:center;padding:55px 15px}.done .emoji{font-size:58px}.done h2{font-size:30px;margin:10px 0 5px}.done p{color:var(--muted)}
 .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:17px}.input,.select,.area{border:1px solid var(--line);background:white;border-radius:12px;padding:11px 13px;outline:none}.input:focus,.select:focus,.area:focus{border-color:var(--primary)}.input{min-width:230px}
@@ -51,7 +51,7 @@ body.dark .top{background:rgba(11,16,32,.82)}body.dark .card-inner{background:li
 <div class="review-top"><span id="counter">0 cards due</span><span id="goalText">Daily goal: 10</span></div><div class="progress"><i id="progress"></i></div>
 <div class="card" id="card"><div class="card-inner">
 <div id="front"><div class="badge" id="cardCat"></div><div class="word" id="cardWord"></div><div id="phonetic" style="color:var(--muted);font-weight:700"></div><button class="pronounce" id="speakFront">🔊 Hear it</button><div class="tap">Tap the card to reveal the meaning</div></div>
-<div class="answer" id="back"><div class="badge" id="backCat"></div><div class="meaning" id="cardMeaning"></div><div class="persian" id="cardPersian"></div><div class="example" id="cardExample"></div><button class="pronounce" id="speakBack">🔊 Hear example</button></div>
+<div class="answer" id="back"><div class="badge" id="backCat"></div><div class="meaning" id="cardMeaning"></div><div class="persian" id="cardPersian"></div><div class="example" id="cardExample"></div><button class="btn" id="retryMeaning" style="display:none;margin-top:10px">↻ Try again</button><button class="pronounce" id="speakBack">🔊 Hear example</button></div>
 </div></div>
 <div class="actions" id="actions" style="display:none"><button class="btn bad" id="again">😵 Again</button><button class="btn hard" id="hard">🤔 Hard</button><button class="btn good" id="easy">😎 Easy</button></div>
 </div>
@@ -128,20 +128,47 @@ let elevenVoiceId=(localStorage.getItem("englishCoachElevenVoiceId")&&localStora
 let elevenModel=localStorage.getItem("englishCoachElevenModel")||"eleven_multilingual_v2";
 let humanVoiceEnabled=localStorage.getItem("englishCoachHumanVoice")!=="off";
 let currentAudio=null;
-async function hydrateWord(w){
- if(!w || w.meaning || w.apiLoaded) return;
- w.apiLoaded=true; save();
- try{
-   const r=await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w.word));
-   if(!r.ok) throw new Error("lookup");
-   const data=await r.json(), entry=data[0], meanings=entry.meanings||[];
-   const first=meanings.find(m=>m.definitions&&m.definitions.length)?.definitions?.[0];
-   w.pos=w.pos||meanings[0]?.partOfSpeech||"";
-   w.meaning=first?.definition||""; w.example=first?.example||"";
-   w.phonetic=entry.phonetics?.find(x=>x.text)?.text||""; save();
-   if(queue[pos]===w) showCard(); renderStats();
- }catch(e){w.meaning="Definition will be added when an internet connection is available.";w.example="Try using this word in a sentence of your own.";save();if(queue[pos]===w)showCard();}
+function clearDictionaryFallback(w){
+ const old="Definition will be added when an internet connection is available.";
+ const oldEx="Try using this word in a sentence of your own.";
+ if(w && (w.meaning===old || w.example===oldEx)){w.meaning="";w.example="";w.apiLoaded=false;w.apiError="";}
 }
+async function hydrateWord(w, force=false){
+ if(!w) return;
+ clearDictionaryFallback(w);
+ if(w.meaning && !force) return;
+ if(w.apiLoading) return;
+ w.apiLoading=true; w.apiError="";
+ if(queue[pos]===w) showCard();
+ const endpoint="https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w.word);
+ let lastError=null;
+ for(let attempt=1;attempt<=3;attempt++){
+   const controller=new AbortController();
+   const timer=setTimeout(()=>controller.abort(),7000);
+   try{
+     const r=await fetch(endpoint+(attempt>1?"?retry="+Date.now():""),{signal:controller.signal,cache:"no-store"});
+     clearTimeout(timer);
+     if(!r.ok) throw new Error(r.status===404?"Word not found in the dictionary.":"Dictionary service is temporarily unavailable.");
+     const data=await r.json(), entry=data[0], meanings=entry.meanings||[];
+     const defs=meanings.flatMap(m=>(m.definitions||[]).map(d=>({d,m})));
+     const first=defs.find(x=>x.d.definition);
+     w.pos=w.pos||first?.m?.partOfSpeech||meanings[0]?.partOfSpeech||"";
+     w.meaning=first?.d?.definition||"Definition found, but no text was returned.";
+     w.example=first?.d?.example||"Try using this word in a sentence of your own.";
+     w.phonetic=entry.phonetics?.find(x=>x.text)?.text||w.phonetic||"";
+     w.apiLoaded=true; w.apiLoading=false; w.apiError=""; save();
+     if(queue[pos]===w) showCard(); renderStats();
+     return;
+   }catch(e){
+     clearTimeout(timer); lastError=e;
+     if(attempt<3) await new Promise(resolve=>setTimeout(resolve,700*attempt));
+   }
+ }
+ w.apiLoading=false; w.apiLoaded=false; w.apiError=lastError?.message||"Could not load the definition.";
+ if(queue[pos]===w) showCard();
+ save();
+}
+
 function updateHumanVoiceStatus(){const el=document.getElementById("humanVoiceStatus");if(el)el.textContent=(humanVoiceEnabled&&elevenVoiceId)?"ElevenLabs ✓":"Not configured";}
 function saveVoiceSettings(){
  elevenVoiceId=document.getElementById("elevenVoiceId")?.value.trim()||"";
@@ -166,11 +193,15 @@ function showCard(){
  if(pos>=queue.length){document.getElementById("reviewArea").style.display="none";document.getElementById("complete").style.display="block";renderStats();updateStreak();return}
  const w=queue[pos];revealed=false;
  document.getElementById("front").style.display="block";document.getElementById("back").classList.remove("show");document.getElementById("actions").style.display="none";
- document.getElementById("cardWord").textContent=w.word;document.getElementById("phonetic").textContent=w.phonetic||"";document.getElementById("cardCat").textContent=w.category;hydrateWord(w);document.getElementById("backCat").textContent=w.category;
- document.getElementById("cardMeaning").textContent=w.meaning;document.getElementById("cardPersian").textContent=w.persian||"";
- document.getElementById("cardExample").innerHTML="<strong>Example:</strong> "+(w.example||"");
+ document.getElementById("cardWord").textContent=w.word;document.getElementById("phonetic").textContent=w.phonetic||"";document.getElementById("cardCat").textContent=w.category;document.getElementById("backCat").textContent=w.category;
+ const meaningEl=document.getElementById("cardMeaning"), exampleEl=document.getElementById("cardExample"), retryEl=document.getElementById("retryMeaning");
+ if(w.apiLoading){meaningEl.textContent="Loading definition…";exampleEl.innerHTML="<strong>Example:</strong> Loading example…";retryEl.style.display="none";}
+ else if(w.apiError){meaningEl.textContent="Definition temporarily unavailable.";exampleEl.innerHTML="<strong>Example:</strong> Try again in a moment, or use your own sentence.";retryEl.style.display="inline-flex";retryEl.title=w.apiError;}
+ else {meaningEl.textContent=w.meaning||"Definition not loaded yet.";exampleEl.innerHTML="<strong>Example:</strong> "+(w.example||"Try using this word in a sentence of your own.");retryEl.style.display=(w.meaning?"none":"inline-flex");}
+ document.getElementById("cardPersian").textContent=w.persian||"";
  document.getElementById("counter").textContent=`Card ${pos+1} of ${queue.length}`;document.getElementById("goalText").textContent=`Today: ${sessionDone}/${Math.max(5,Math.min(50,+(localStorage.getItem("englishCoachGoal")||10)))}`;
  document.getElementById("progress").style.width=(pos/queue.length*100)+"%";
+ if(!w.meaning && !w.apiLoading) hydrateWord(w);
 }
 function reveal(){if(revealed)return;revealed=true;document.getElementById("front").style.display="none";document.getElementById("back").classList.add("show");document.getElementById("actions").style.display="flex"}
 function grade(level){
@@ -200,6 +231,7 @@ updateHumanVoiceStatus();
 document.getElementById("card").onclick=e=>{if(!e.target.closest("button"))reveal()};
 document.getElementById("speakFront").onclick=e=>{e.stopPropagation();speak(queue[pos]?.word||"")};
 document.getElementById("speakBack").onclick=e=>{e.stopPropagation();speak(queue[pos]?.example||"")};
+document.getElementById("retryMeaning").onclick=e=>{e.stopPropagation();const w=queue[pos];if(w)hydrateWord(w,true)};
 document.getElementById("again").onclick=()=>grade("again");document.getElementById("hard").onclick=()=>grade("hard");document.getElementById("easy").onclick=()=>grade("easy");
 document.getElementById("newSession").onclick=startSession;
 

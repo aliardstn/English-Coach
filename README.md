@@ -1,28 +1,16 @@
-# English Coach — Personal Vocabulary Website
+# English Coach — ElevenLabs v4
 
-A simple, private flashcard website for English vocabulary.
+This version uses ElevenLabs for natural pronunciation through a Vercel serverless function.
 
-## Run it
-1. Open `index.html` in a browser.
-2. Your vocabulary is stored locally in your browser using localStorage.
-3. Add words from the **Add Word** page and review them from **Daily Review**.
+## Vercel setup
+1. Add the repository to Vercel.
+2. In **Vercel → Project → Settings → Environment Variables**, add:
+   - Name: `ELEVENLABS_API_KEY`
+   - Value: your ElevenLabs API key
+3. Redeploy the project.
 
-## Included
-- Flashcards with reveal
-- "Forgot" / "I knew it" tracking
-- Vocabulary search and category filtering
-- Progress statistics
-- Starter vocabulary
-- Mobile-friendly design
-- No account or server required
+The ElevenLabs API key must **not** be placed in `index.html` or committed to GitHub.
 
-## Next upgrades
-This can later become a full online app with:
-- Spaced-repetition scheduling (SM-2/FSRS)
-- Login and cloud sync
-- Text-to-speech
-- AI-generated definitions/examples
-- English-only practice mode
-- Multiple-choice and fill-in-the-blank quizzes
-- Daily goals and streaks
-- Import/export CSV
+The default Voice ID is the one selected for this project: `rsMwNQrvMR1sC0YMsK2a`. You can change it in Settings.
+
+The app calls `/api/tts`, which forwards text to ElevenLabs without exposing the API key to the browser.

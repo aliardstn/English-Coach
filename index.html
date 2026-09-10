@@ -32,6 +32,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10p
 <div class="brand">English <i>Coach</i> ✨</div>
 <div class="navlinks">
 <button class="navbtn active" data-view="review">Review</button><button class="navbtn" data-view="quiz">Quiz</button><button class="navbtn" data-view="words">My Words</button><button class="navbtn" data-view="add">Add Word</button>
+<button class="navbtn" data-view="settings">⚙️</button>
 </div></div></header>
 <main>
 <section id="review" class="view active">
@@ -41,7 +42,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10p
 <div id="reviewArea">
 <div class="review-top"><span id="counter">0 cards due</span><span id="goalText">Daily goal: 10</span></div><div class="progress"><i id="progress"></i></div>
 <div class="card" id="card"><div class="card-inner">
-<div id="front"><div class="badge" id="cardCat"></div><div class="word" id="cardWord"></div><button class="pronounce" id="speakFront">🔊 Hear it</button><div class="tap">Tap the card to reveal the meaning</div></div>
+<div id="front"><div class="badge" id="cardCat"></div><div class="word" id="cardWord"></div><div id="phonetic" style="color:var(--muted);font-weight:700"></div><button class="pronounce" id="speakFront">🔊 Hear it</button><div class="tap">Tap the card to reveal the meaning</div></div>
 <div class="answer" id="back"><div class="badge" id="backCat"></div><div class="meaning" id="cardMeaning"></div><div class="persian" id="cardPersian"></div><div class="example" id="cardExample"></div><button class="pronounce" id="speakBack">🔊 Hear example</button></div>
 </div></div>
 <div class="actions" id="actions" style="display:none"><button class="btn bad" id="again">😵 Again</button><button class="btn hard" id="hard">🤔 Hard</button><button class="btn good" id="easy">😎 Easy</button></div>
@@ -68,6 +69,23 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10p
 <input class="input" name="category" placeholder="Category" value="Everyday"><textarea class="area full" name="example" placeholder="Example sentence"></textarea>
 <button class="btn primary full" type="submit">✨ Add to my vocabulary</button>
 </form></div></section>
+
+<section id="settings" class="view">
+<div class="hero"><div><h1>Voice & Learning ⚙️</h1><p>Make English Coach sound and feel the way you like.</p></div></div>
+<div class="panel">
+<div class="notice">Your browser provides the available voices. For a richer narrator voice, choose a deep English voice if your device offers one.</div>
+<div class="form">
+<div><label><strong>Pronunciation voice</strong></label><select class="select full" id="voiceSelect" style="width:100%;margin-top:7px"></select></div>
+<div><label><strong>Speaking speed</strong></label><input id="rate" type="range" min=".65" max="1.15" step=".05" value=".88" style="width:100%;margin-top:12px"><div id="rateValue">0.88×</div></div>
+<div><label><strong>Voice pitch</strong></label><input id="pitch" type="range" min=".65" max="1.25" step=".05" value=".95" style="width:100%;margin-top:12px"><div id="pitchValue">0.95</div></div>
+<div><label><strong>Test voice</strong></label><button class="btn primary" id="testVoice" style="margin-top:7px">🔊 Say “Meticulous”</button></div>
+</div>
+<hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
+<h3>Learning goal 🎯</h3>
+<p style="color:var(--muted)">Daily cards</p>
+<input id="dailyGoal" type="number" min="5" max="50" value="10" class="input">
+<button class="btn primary" id="saveSettings" style="display:block;margin-top:15px">Save settings</button>
+</div></section>
 </main>
 
 <script>
@@ -80,8 +98,51 @@ const starter=[
 {word:"articulate",pos:"verb",meaning:"To express an idea clearly and effectively.",persian:"شفاف بیان کردن",category:"Work & Interviews",example:"She was able to articulate her research goals very clearly."}
 ];
 let words=JSON.parse(localStorage.getItem("englishCoachWords")||"null")||starter.map(w=>({...w,seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0}));
-words=words.map(w=>({seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0,...w}));
+const bulkWords=["abandon", "ability", "absolute", "absorb", "abstract", "abundant", "accelerate", "access", "accomplish", "accurate", "achieve", "acquire", "adapt", "adequate", "adjacent", "adjust", "administer", "advocate", "alter", "ambitious", "analyze", "annual", "anticipate", "apparent", "appeal", "approach", "appropriate", "arise", "assess", "assign", "assist", "assume", "assure", "attain", "attempt", "attitude", "attribute", "aware", "awkward", "barrier", "beneficial", "brief", "capacity", "cease", "challenge", "clarify", "collaborate", "coherent", "coincide", "collapse", "compelling", "compensate", "compile", "comprehensive", "conceive", "concentrate", "conduct", "confirm", "considerable", "consistent", "constrain", "consult", "consume", "contemporary", "contradict", "crucial", "decline", "deduce", "demonstrate", "deny", "depict", "derive", "detect", "deviate", "diverse", "dominate", "draft", "dynamic", "eliminate", "emerge", "emphasize", "encounter", "enhance", "ensure", "equivalent", "establish", "evaluate", "evident", "evolve", "exceed", "exclude", "exhibit", "expand", "exploit", "facilitate", "fluctuate", "formulate", "foster", "framework", "generate", "genuine", "implement", "imply", "incentive", "incorporate", "inevitable", "inhibit", "innovate", "inspect", "integrate", "interpret", "intervene", "isolate", "justify", "leverage", "maintain", "manipulate", "marginal", "maximize", "migrate", "modify", "monitor", "nevertheless", "obtain", "occur", "offset", "ongoing", "perceive", "persist", "precise", "preliminary", "predominant", "prioritize", "proceed", "profound", "promote", "prompt", "pursue", "rational", "recover", "refine", "reinforce", "reluctant", "resolve", "retain", "reveal", "rigorous", "robust", "scarce", "scenario", "shift", "significant", "simulate", "simultaneous", "sole", "sophisticated", "specify", "stable", "strategy", "submit", "subsequent", "substantial", "sustain", "target", "terminate", "transform", "transparent", "trigger", "underlying", "unique", "utilize", "validate", "versatile", "viable", "whereas", "widespread", "yield", "accessory", "accommodate", "acknowledge", "adhere", "adverse", "aggregate", "allocate", "alternative", "ambiguity", "amend", "analogy", "arbitrary", "articulate", "assemble", "audit", "autonomous", "behalf", "bias", "bulk", "commodity", "compatible", "complement", "compliance", "component", "comprise", "concurrent", "confer", "configuration", "consent", "consecutive", "contingency", "conventional", "coordinate", "core", "credible", "criterion", "cumulative", "dataset", "decisive", "dedicated", "deficiency", "deploy", "deteriorate", "discrete", "discriminate", "empirical", "enable", "endorse", "entity", "erode", "ethical", "explicit", "feasible", "finite", "foreseeable", "forthcoming", "frequency", "fundamental", "guideline", "hierarchy", "highlight", "hypothesis", "identical", "implication", "incidence", "incline", "indicator", "infer", "infrastructure", "innovative", "insight", "install", "integrity", "interact", "intermediate", "interval", "intrinsic", "methodology", "minimize", "paradigm", "parameter", "prevalence", "primary", "protocol", "qualitative", "quantitative", "rationale", "regime", "resilience", "retrieve", "revenue", "route", "stakeholder", "statistic", "strategic", "subsidy", "sufficient", "tangible", "trajectory", "transition", "uncertainty", "variable", "verify", "virtual", "voluntary", "vulnerable", "welfare", "adaptable", "agenda", "alignment", "approval", "assignment", "assumption", "benchmark", "clarification", "commitment", "communicate", "competent", "consensus", "constraint", "coordination", "credibility", "deadline", "decision", "delegate", "deliverable", "department", "designate", "develop", "efficiency", "eligible", "email", "empower", "executive", "feedback", "flexible", "forecast", "goal", "initiative", "interview", "negotiate", "objective", "opportunity", "outcome", "performance", "perspective", "policy", "potential", "prepare", "priority", "professional", "proposal", "qualification", "recommend", "recruit", "reference", "relevant", "reliable", "respond", "resume", "review", "schedule", "supervise", "sustainable", "teamwork", "update", "vacancy", "workplace", "accompany", "admire", "admit", "adopt", "advance", "advise", "afford", "alert", "amaze", "ambition", "amuse", "appreciate", "approve", "argue", "arrange", "aspect", "astonish", "attach", "attend", "attract", "avoid", "balance", "barely", "behave", "benefit", "betray", "boost", "bother", "boundary", "brave", "breathe", "brilliant", "broaden", "capture", "career", "cautious", "celebrate", "circumstance", "claim", "classic", "clever", "climate", "combine", "comfort", "command", "common", "compare", "compel", "compete", "complain", "complex", "concern", "conclude", "condition", "confident", "conflict", "confront", "connect", "consequence", "construct", "contact", "contain", "contribute", "convince", "cooperate", "cope", "correspond", "curious", "debate", "decade", "dedicate", "defend", "define", "deliberate", "deliver", "demand", "depend", "deserve", "determine", "devote", "differ", "diminish", "discipline", "discover", "dismiss", "display", "distinct", "distribute", "domestic", "dramatic", "durable", "eager", "edit", "educate", "efficient", "elaborate", "elect", "emotion", "employ", "encourage", "endure", "enforce", "engage", "enormous", "entertain", "entire", "equal", "equip", "escape", "essential", "estimate", "exact", "examine", "excellent", "expect", "experience", "expert", "explain", "expose", "external", "extract", "extreme", "familiar", "feature", "finance", "focus", "fortunate", "frequent", "gather", "generous", "global", "govern", "gradual", "grant", "grateful", "guarantee", "habit", "handle", "hesitate", "honest", "identify", "ignore", "illustrate", "imagine", "impact", "importance", "improve", "incident", "include", "increase", "independent", "indicate", "influence", "inform", "initial"];
+function addBulkWords(){
+ const existing=new Set(words.map(w=>w.word.toLowerCase()));
+ bulkWords.forEach((word,i)=>{
+   if(!existing.has(word.toLowerCase())){
+     const category=i<170?"Everyday":i<335?"Academic":"Work & Interviews";
+     words.push({word,pos:"",meaning:"",persian:"",category,example:"",seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0,apiLoaded:false});
+   }
+ });
+ save();
+}
+
+words=words.map(w=>({seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0,...w}));\naddBulkWords();
 let queue=[],pos=0,revealed=false,sessionDone=0,quizScore=0,quizCount=0;
+let voices=[], selectedVoiceName=localStorage.getItem("englishCoachVoice")||"", speechRate=+(localStorage.getItem("englishCoachRate")||".88"), speechPitch=+(localStorage.getItem("englishCoachPitch")||".95");
+async function hydrateWord(w){{
+ if(!w || w.meaning || w.apiLoaded) return;
+ w.apiLoaded=true; save();
+ try{{
+   const r=await fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w.word));
+   if(!r.ok) throw new Error("lookup");
+   const data=await r.json(), entry=data[0], meanings=entry.meanings||[];
+   const first=meanings.find(m=>m.definitions&&m.definitions.length)?.definitions?.[0];
+   w.pos=w.pos||meanings[0]?.partOfSpeech||"";
+   w.meaning=first?.definition||"";
+   w.example=first?.example||"";
+   const phon=entry.phonetics?.find(x=>x.text)?.text;
+   w.phonetic=phon||"";
+   save();
+   if(queue[pos]===w) showCard();
+   renderStats();
+ }}catch(e){{w.meaning="Definition will be added when an internet connection is available.";w.example="Try using this word in a sentence of your own.";save();if(queue[pos]===w)showCard();}}
+}}
+function loadVoices(){{
+ voices=speechSynthesis.getVoices().filter(v=>/^en(-|_)/i.test(v.lang));
+ const sel=document.getElementById("voiceSelect"); if(!sel)return;
+ sel.innerHTML=voices.length?voices.map(v=>`<option value="${{v.name}}">${{v.name}} — ${{v.lang}}</option>`).join(""):'<option>No English voices detected</option>';
+ if(selectedVoiceName && voices.some(v=>v.name===selectedVoiceName))sel.value=selectedVoiceName;
+}}
+function applyVoiceSettings(){{
+ speechRate=+document.getElementById("rate").value;speechPitch=+document.getElementById("pitch").value;
+ localStorage.setItem("englishCoachRate",speechRate);localStorage.setItem("englishCoachPitch",speechPitch);
+ const s=document.getElementById("voiceSelect");if(s){{selectedVoiceName=s.value||"";localStorage.setItem("englishCoachVoice",selectedVoiceName)}}
+}}
+
 
 function save(){localStorage.setItem("englishCoachWords",JSON.stringify(words))}
 function todayKey(){return new Date().toISOString().slice(0,10)}
@@ -94,15 +155,15 @@ function renderStats(){
  const due=dueWords().length, practiced=words.filter(w=>w.seen>0).length, mastered=words.filter(w=>w.interval>=21).length, total=words.length;
  document.getElementById("stats").innerHTML=`<div class="stat"><b>${due}</b><small>Due today</small></div><div class="stat"><b>${total}</b><small>Total words</small></div><div class="stat"><b>${mastered}</b><small>Mastered</small></div><div class="stat"><b>${practiced?Math.round(words.reduce((s,w)=>s+w.known,0)/Math.max(1,words.reduce((s,w)=>s+w.seen,0))*100):0}%</b><small>Accuracy</small></div>`;
 }
-function startSession(){queue=dueWords().slice(0,10);pos=0;sessionDone=0;document.getElementById("reviewArea").style.display=queue.length?"block":"none";document.getElementById("complete").style.display=queue.length?"none":"block";showCard()}
+function startSession(){const goal=Math.max(5,Math.min(50,+(localStorage.getItem("englishCoachGoal")||10)));queue=dueWords().slice(0,goal);pos=0;sessionDone=0;document.getElementById("reviewArea").style.display=queue.length?"block":"none";document.getElementById("complete").style.display=queue.length?"none":"block";showCard()}
 function showCard(){
  if(pos>=queue.length){document.getElementById("reviewArea").style.display="none";document.getElementById("complete").style.display="block";renderStats();updateStreak();return}
  const w=queue[pos];revealed=false;
  document.getElementById("front").style.display="block";document.getElementById("back").classList.remove("show");document.getElementById("actions").style.display="none";
- document.getElementById("cardWord").textContent=w.word;document.getElementById("cardCat").textContent=w.category;document.getElementById("backCat").textContent=w.category;
+ document.getElementById("cardWord").textContent=w.word;document.getElementById("phonetic").textContent=w.phonetic||"";document.getElementById("cardCat").textContent=w.category;hydrateWord(w);document.getElementById("backCat").textContent=w.category;
  document.getElementById("cardMeaning").textContent=w.meaning;document.getElementById("cardPersian").textContent=w.persian||"";
  document.getElementById("cardExample").innerHTML="<strong>Example:</strong> "+(w.example||"");
- document.getElementById("counter").textContent=`Card ${pos+1} of ${queue.length}`;document.getElementById("goalText").textContent=`Today: ${sessionDone}/10`;
+ document.getElementById("counter").textContent=`Card ${pos+1} of ${queue.length}`;document.getElementById("goalText").textContent=`Today: ${sessionDone}/${Math.max(5,Math.min(50,+(localStorage.getItem("englishCoachGoal")||10)))}`;
  document.getElementById("progress").style.width=(pos/queue.length*100)+"%";
 }
 function reveal(){if(revealed)return;revealed=true;document.getElementById("front").style.display="none";document.getElementById("back").classList.add("show");document.getElementById("actions").style.display="flex"}
@@ -113,7 +174,7 @@ function grade(level){
  if(level==="easy"){w.known++;w.ease=Math.min(3,w.ease+.1);w.interval=w.interval?Math.max(2,Math.round(w.interval*w.ease)):2;w.due=now+w.interval*86400000}
  save();sessionDone++;pos++;renderStats();showCard();
 }
-function speak(text){if("speechSynthesis"in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);u.lang="en-CA";u.rate=.88;speechSynthesis.speak(u)}}
+function speak(text){if("speechSynthesis"in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(text);let v=voices.find(x=>x.name===selectedVoiceName);if(v)u.voice=v;u.lang=v?.lang||"en-CA";u.rate=speechRate;u.pitch=speechPitch;speechSynthesis.speak(u)}}
 document.getElementById("card").onclick=e=>{if(!e.target.closest("button"))reveal()};
 document.getElementById("speakFront").onclick=e=>{e.stopPropagation();speak(queue[pos]?.word||"")};
 document.getElementById("speakBack").onclick=e=>{e.stopPropagation();speak(queue[pos]?.example||"")};
@@ -125,7 +186,7 @@ document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>{document.querySel
 function renderTable(){
  const q=document.getElementById("search").value.toLowerCase(),f=document.getElementById("filter").value;
  const list=words.filter(w=>(w.word+" "+w.meaning+" "+(w.persian||"")).toLowerCase().includes(q)&&(f==="all"||w.category===f));
- document.getElementById("wordTable").innerHTML=list.length?`<table><thead><tr><th>Word</th><th>Meaning</th><th>Category</th><th>Mastery</th></tr></thead><tbody>${list.map(w=>`<tr><td><strong>${w.word}</strong><br><small>${w.pos||""}</small></td><td>${w.meaning}</td><td><span class="tag">${w.category}</span></td><td><div class="mastery"><i style="width:${Math.min(100,(w.interval/21)*100)}%"></i></div><small>${w.interval?Math.min(w.interval,21):0}/21 days</small></td></tr>`).join("")}</tbody></table>`:'<div class="empty">No matching words.</div>'
+ document.getElementById("wordTable").innerHTML=list.length?`<table><thead><tr><th>Word</th><th>Meaning</th><th>Category</th><th>Mastery</th></tr></thead><tbody>${list.map(w=>`<tr><td><strong>${w.word}</strong><br><small>${w.pos||""}</small></td><td>${w.meaning||"🔄 Definition loads when you study this word"}</td><td><span class="tag">${w.category}</span></td><td><div class="mastery"><i style="width:${Math.min(100,(w.interval/21)*100)}%"></i></div><small>${w.interval?Math.min(w.interval,21):0}/21 days</small></td></tr>`).join("")}</tbody></table>`:'<div class="empty">No matching words.</div>'
 }
 document.getElementById("search").oninput=renderTable;document.getElementById("filter").onchange=renderTable;
 
@@ -143,6 +204,12 @@ function answerQuiz(ans,btn){
  if(ans===quizWord.word){btn.classList.add("correct");quizScore++;quizCount++}else{btn.classList.add("wrong");document.querySelectorAll(".choice").forEach(x=>{if(decodeURIComponent(x.dataset.word)===quizWord.word)x.classList.add("correct")});quizCount++}
  setTimeout(startQuiz,650)
 }
+document.getElementById("rate").value=speechRate;document.getElementById("pitch").value=speechPitch;document.getElementById("rateValue").textContent=speechRate.toFixed(2)+"×";document.getElementById("pitchValue").textContent=speechPitch.toFixed(2);
+document.getElementById("rate").oninput=e=>document.getElementById("rateValue").textContent=(+e.target.value).toFixed(2)+"×";
+document.getElementById("pitch").oninput=e=>document.getElementById("pitchValue").textContent=(+e.target.value).toFixed(2);
+document.getElementById("testVoice").onclick=()=>{applyVoiceSettings();speak("Meticulous. She is meticulous when reviewing research papers.");};
+document.getElementById("saveSettings").onclick=()=>{applyVoiceSettings();let g=Math.max(5,Math.min(50,+document.getElementById("dailyGoal").value||10));localStorage.setItem("englishCoachGoal",g);alert("Settings saved ✨");};
+if("speechSynthesis"in window){{speechSynthesis.onvoiceschanged=loadVoices;loadVoices();}}
 renderStats();updateStreak();startSession();
 </script>
 </body></html>

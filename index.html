@@ -29,7 +29,7 @@ table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:13px 10p
 body.dark{--bg:#0b1020;--surface:#12192b;--ink:#f4f6ff;--muted:#a8b1c7;--line:#27324a;--soft:#20294a;--greenbg:#103326;--redbg:#351b24;--shadow:0 22px 65px rgba(0,0,0,.32);background:radial-gradient(circle at 15% 0%,#24204e 0,transparent 30%),radial-gradient(circle at 90% 20%,#102e42 0,transparent 24%),var(--bg)}
 body.dark .top{background:rgba(11,16,32,.82)}body.dark .card-inner{background:linear-gradient(145deg,#151d32,#101728);border-color:#2c3853}body.dark .example{background:#0d1425}body.dark .input,body.dark .select,body.dark .area,body.dark .choice{background:#0f1628;color:var(--ink);border-color:#2b3750}body.dark .secondary{background:#20283a;color:var(--ink)}
 .theme-btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:42px;height:42px;border-radius:13px;font-size:19px;box-shadow:var(--shadow)}
-.settings{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.voice-select{max-width:330px}.voice-label{font-size:13px;color:var(--muted);font-weight:750} .voice-help{font-size:13px;color:var(--muted);line-height:1.5;margin-top:8px}.voice-refresh{margin-top:8px}.voice-status{font-size:12px;color:var(--muted);margin-left:4px}
+.settings{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}.voice-select{max-width:330px}.voice-label{font-size:13px;color:var(--muted);font-weight:750}
 
 @media(max-width:700px){.stats{grid-template-columns:1fr 1fr}.hero{align-items:flex-start;flex-direction:column}.nav{align-items:flex-start}.navlinks{overflow:auto;max-width:70vw}.word{font-size:43px}.card-inner{min-height:320px;padding:25px}.form,.choices{grid-template-columns:1fr}th:nth-child(2),td:nth-child(2){display:none}
 </style>
@@ -45,7 +45,7 @@ body.dark .top{background:rgba(11,16,32,.82)}body.dark .card-inner{background:li
 <section id="review" class="view active">
 <div class="hero"><div><h1>Ready to level up? 🚀</h1><p>Your daily vocabulary practice, one card at a time.</p></div><div class="streak">🔥 <b id="streak">0</b> day streak</div></div>
 <div class="stats" id="stats"></div>
-<div class="settings"><span class="voice-label">🎙️ Voice:</span><select class="select voice-select" id="voiceSelectMain"><option value="">Loading voices…</option></select><span class="voice-label">Speed</span><select class="select" id="rateSelect"><option value="0.78">Slow</option><option value="0.88" selected>Natural</option><option value="1">Fast</option></select></div>
+<div class="settings"><span class="voice-label">🎙️ Voice:</span><span id="humanVoiceStatus" class="voice-label">Not configured</span><span class="voice-label">Speed</span><select class="select" id="rateSelect"><option value="0.78">Slow</option><option value="0.88" selected>Natural</option><option value="1">Fast</option></select></div>
 <div class="panel">
 <div id="reviewArea">
 <div class="review-top"><span id="counter">0 cards due</span><span id="goalText">Daily goal: 10</span></div><div class="progress"><i id="progress"></i></div>
@@ -81,12 +81,12 @@ body.dark .top{background:rgba(11,16,32,.82)}body.dark .card-inner{background:li
 <section id="settings" class="view">
 <div class="hero"><div><h1>Voice & Learning ⚙️</h1><p>Make English Coach sound and feel the way you like.</p></div></div>
 <div class="panel">
-<div class="notice">English Coach now uses the voices your device/browser exposes. On iPhone, try an English system or enhanced voice from the list below. The exact Siri assistant voice cannot be selected by a website.</div>
+<div class="notice">✨ <strong>ElevenLabs Human Voice</strong> gives English Coach a much more natural neural voice than browser speech. Your ElevenLabs API key stays on Vercel and is never stored in this page.</div>
 <div class="form">
-<div><label><strong>Pronunciation voice</strong></label><select class="select full" id="voiceSelectSettings" style="width:100%;margin-top:7px"></select><button class="btn secondary voice-refresh" id="refreshVoices" type="button">↻ Refresh device voices</button><span class="voice-status" id="voiceStatus"></span><div class="voice-help">Tip: on iPhone/iPad, this list comes from the voices Apple exposes to Safari. Downloaded/enhanced English voices may appear here. The exact Siri assistant voice is not exposed as a web voice.</div></div>
-<div><label><strong>Speaking speed</strong></label><input id="rate" type="range" min=".65" max="1.15" step=".05" value=".88" style="width:100%;margin-top:12px"><div id="rateValue">0.88×</div></div>
-<div><label><strong>Voice pitch</strong></label><input id="pitch" type="range" min=".65" max="1.25" step=".05" value=".95" style="width:100%;margin-top:12px"><div id="pitchValue">0.95</div></div>
-<div><label><strong>Test voice</strong></label><button class="btn primary" id="testVoice" style="margin-top:7px">🔊 Say “Meticulous”</button></div>
+<div class="full"><label><strong>ElevenLabs Voice ID</strong></label><input class="input" id="elevenVoiceId" placeholder="Paste the Voice ID from ElevenLabs" style="width:100%;margin-top:7px"></div>
+<div><label><strong>Voice model</strong></label><select class="select" id="elevenModel" style="width:100%;margin-top:7px"><option value="eleven_v3">Eleven v3 — expressive</option><option value="eleven_multilingual_v2" selected>Multilingual v2 — natural</option><option value="eleven_flash_v2_5">Flash v2.5 — fast</option></select></div>
+<div><label><strong>Voice mode</strong></label><select class="select" id="humanVoiceEnabled" style="width:100%;margin-top:7px"><option value="on">Use ElevenLabs Human Voice</option><option value="off">Use browser voice</option></select></div>
+<div class="full"><label><strong>Test voice</strong></label><button class="btn primary" id="testVoice" style="margin-top:7px">🔊 Say “Meticulous”</button></div>
 </div>
 <hr style="border:0;border-top:1px solid var(--line);margin:24px 0">
 <h3>Learning goal 🎯</h3>
@@ -121,7 +121,13 @@ function addBulkWords(){
 words=words.map(w=>({seen:0,known:0,forgot:0,ease:2.5,interval:0,due:0,...w}));
 addBulkWords();
 let queue=[],pos=0,revealed=false,sessionDone=0,quizScore=0,quizCount=0;
-let voices=[], selectedVoiceName=localStorage.getItem("englishCoachVoice")||"", speechRate=+(localStorage.getItem("englishCoachRate")||".88"), speechPitch=+(localStorage.getItem("englishCoachPitch")||".95");
+let selectedVoiceName=localStorage.getItem("englishCoachVoice")||"";
+let speechRate=+(localStorage.getItem("englishCoachRate")||".88");
+let speechPitch=+(localStorage.getItem("englishCoachPitch")||".95");
+let elevenVoiceId=localStorage.getItem("englishCoachElevenVoiceId")||"1SM7GgM6IMuvQlz2BwM3";
+let elevenModel=localStorage.getItem("englishCoachElevenModel")||"eleven_multilingual_v2";
+let humanVoiceEnabled=localStorage.getItem("englishCoachHumanVoice")!=="off";
+let currentAudio=null;
 async function hydrateWord(w){
  if(!w || w.meaning || w.apiLoaded) return;
  w.apiLoaded=true; save();
@@ -131,14 +137,18 @@ async function hydrateWord(w){
    const data=await r.json(), entry=data[0], meanings=entry.meanings||[];
    const first=meanings.find(m=>m.definitions&&m.definitions.length)?.definitions?.[0];
    w.pos=w.pos||meanings[0]?.partOfSpeech||"";
-   w.meaning=first?.definition||"";
-   w.example=first?.example||"";
-   const phon=entry.phonetics?.find(x=>x.text)?.text;
-   w.phonetic=phon||"";
-   save();
-   if(queue[pos]===w) showCard();
-   renderStats();
+   w.meaning=first?.definition||""; w.example=first?.example||"";
+   w.phonetic=entry.phonetics?.find(x=>x.text)?.text||""; save();
+   if(queue[pos]===w) showCard(); renderStats();
  }catch(e){w.meaning="Definition will be added when an internet connection is available.";w.example="Try using this word in a sentence of your own.";save();if(queue[pos]===w)showCard();}
+}
+function updateHumanVoiceStatus(){const el=document.getElementById("humanVoiceStatus");if(el)el.textContent=(humanVoiceEnabled&&elevenVoiceId)?"ElevenLabs ✓":"Not configured";}
+function saveVoiceSettings(){
+ elevenVoiceId=document.getElementById("elevenVoiceId")?.value.trim()||"";
+ elevenModel=document.getElementById("elevenModel")?.value||"eleven_multilingual_v2";
+ humanVoiceEnabled=document.getElementById("humanVoiceEnabled")?.value!=="off";
+ localStorage.setItem("englishCoachElevenVoiceId",elevenVoiceId);localStorage.setItem("englishCoachElevenModel",elevenModel);localStorage.setItem("englishCoachHumanVoice",humanVoiceEnabled?"on":"off");
+ updateHumanVoiceStatus();
 }
 function save(){localStorage.setItem("englishCoachWords",JSON.stringify(words))}
 function todayKey(){return new Date().toISOString().slice(0,10)}
@@ -170,83 +180,22 @@ function grade(level){
  if(level==="easy"){w.known++;w.ease=Math.min(3,w.ease+.1);w.interval=w.interval?Math.max(2,Math.round(w.interval*w.ease)):2;w.due=now+w.interval*86400000}
  save();sessionDone++;pos++;renderStats();showCard();
 }
-let availableVoices=[];
-function voiceLabel(v){
- const lang=v.lang||"en";
- const local=v.localService!==false;
- const quality=/enhanced|premium|natural|neural|siri/i.test(v.name||"")?" ✨":"";
- return `${v.name} — ${lang}${local?" · Device":" · Browser"}${quality}`;
+async function speakHuman(text){
+ if(!elevenVoiceId) throw new Error("No ElevenLabs Voice ID is configured.");
+ if(currentAudio){try{currentAudio.pause();}catch(e){} currentAudio=null;}
+ const rate=Number(document.getElementById("rateSelect")?.value||.88);
+ const r=await fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text,voiceId:elevenVoiceId,modelId:elevenModel,speed:rate})});
+ if(!r.ok){let msg="ElevenLabs request failed.";try{const d=await r.json();msg=d.error||msg;}catch(e){}throw new Error(msg);}
+ const blob=await r.blob(), url=URL.createObjectURL(blob); currentAudio=new Audio(url);
+ currentAudio.onended=()=>{URL.revokeObjectURL(url);currentAudio=null}; await currentAudio.play();
 }
-function getVoiceByName(name){return availableVoices.find(v=>v.name===name) || null;}
-function populateVoiceSelects(){
- const selects=[document.getElementById("voiceSelectMain"),document.getElementById("voiceSelectSettings")].filter(Boolean);
- const saved=localStorage.getItem("englishCoachVoice")||selectedVoiceName||"";
- const options=availableVoices.length
-   ? availableVoices.map(v=>`<option value="${encodeURIComponent(v.name)}">${voiceLabel(v)}</option>`).join("")
-   : '<option value="">No English device voices detected yet — tap Refresh</option>';
- selects.forEach(sel=>{
-   sel.innerHTML=options;
-   const target=availableVoices.find(v=>v.name===saved);
-   if(target) sel.value=encodeURIComponent(target.name);
- });
- const status=document.getElementById("voiceStatus");
- if(status) status.textContent=availableVoices.length?`${availableVoices.length} English voice${availableVoices.length===1?"":"s"} available`:"Waiting for device voices…";
-}
-function loadVoices(){
- if(!("speechSynthesis" in window)){
-   availableVoices=[]; populateVoiceSelects(); return;
- }
- const all=speechSynthesis.getVoices()||[];
- // Prefer English voices; keep device/local voices first so iPhone voices are easy to find.
- availableVoices=all.filter(v=>/^en(?:-|_)/i.test(v.lang)).sort((a,b)=>{
-   const al=a.localService===false?1:0, bl=b.localService===false?1:0;
-   if(al!==bl)return al-bl;
-   const aca=/CA/i.test(a.lang)?0:1, bca=/CA/i.test(b.lang)?0:1;
-   if(aca!==bca)return aca-bca;
-   return (a.name||"").localeCompare(b.name||"");
- });
- populateVoiceSelects();
-}
-function saveSelectedVoice(value){
- const name=decodeURIComponent(value||"");
- selectedVoiceName=name;
- localStorage.setItem("englishCoachVoice",name);
- const a=document.getElementById("voiceSelectMain"), b=document.getElementById("voiceSelectSettings");
- [a,b].filter(Boolean).forEach(s=>{if(s.value!==value)s.value=value;});
-}
-function applyVoiceSettings(){
- speechRate=+document.getElementById("rate").value;
- speechPitch=+document.getElementById("pitch").value;
- localStorage.setItem("englishCoachRate",speechRate);
- localStorage.setItem("englishCoachPitch",speechPitch);
- const s=document.getElementById("voiceSelectSettings");
- if(s) saveSelectedVoice(s.value);
-}
-function speak(text){
- if(!("speechSynthesis" in window)){alert("Speech is not available in this browser.");return}
- if(!text)return;
- speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);
- const selected=getVoiceByName(selectedVoiceName || decodeURIComponent(document.getElementById("voiceSelectMain")?.value||""));
- if(selected){u.voice=selected;u.lang=selected.lang;}else{u.lang="en-CA";}
- u.rate=Number(localStorage.getItem("englishCoachRate")||document.getElementById("rateSelect")?.value||.88);
- u.pitch=Number(localStorage.getItem("englishCoachPitch")||.95);
- speechSynthesis.speak(u);
-}
-if("speechSynthesis" in window){
- loadVoices();
- speechSynthesis.onvoiceschanged=loadVoices;
-}
-const mainVoice=document.getElementById("voiceSelectMain");
-const settingsVoice=document.getElementById("voiceSelectSettings");
-if(mainVoice) mainVoice.onchange=e=>saveSelectedVoice(e.target.value);
-if(settingsVoice) settingsVoice.onchange=e=>saveSelectedVoice(e.target.value);
-const refreshVoices=document.getElementById("refreshVoices");
-if(refreshVoices) refreshVoices.onclick=()=>{
- if("speechSynthesis" in window){speechSynthesis.cancel();loadVoices();setTimeout(loadVoices,300);setTimeout(loadVoices,1000);}
-};
-const savedRate=localStorage.getItem("englishCoachRate");
-if(savedRate)document.getElementById("rateSelect").value=savedRate;
+function speakBrowser(text){if(!('speechSynthesis' in window)){alert('Speech is not available in this browser.');return} speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-CA';u.rate=Number(document.getElementById('rateSelect')?.value||.88);u.pitch=.95;speechSynthesis.speak(u)}
+async function speak(text){if(!text)return;if(humanVoiceEnabled&&elevenVoiceId){try{await speakHuman(text);return}catch(e){alert(e.message+"\n\nCheck Settings → ElevenLabs Human Voice.");return}}speakBrowser(text)}
+const rateEl=document.getElementById('rateSelect');if(rateEl){const sr=localStorage.getItem('englishCoachRate');if(sr)rateEl.value=sr;rateEl.onchange=()=>{localStorage.setItem('englishCoachRate',rateEl.value);speechRate=+rateEl.value}}
+const voiceIdEl=document.getElementById('elevenVoiceId');if(voiceIdEl)voiceIdEl.value=elevenVoiceId;
+const modelEl=document.getElementById('elevenModel');if(modelEl)modelEl.value=elevenModel;
+const enabledEl=document.getElementById('humanVoiceEnabled');if(enabledEl)enabledEl.value=humanVoiceEnabled?'on':'off';
+updateHumanVoiceStatus();
 
 document.getElementById("card").onclick=e=>{if(!e.target.closest("button"))reveal()};
 document.getElementById("speakFront").onclick=e=>{e.stopPropagation();speak(queue[pos]?.word||"")};
@@ -277,11 +226,9 @@ function answerQuiz(ans,btn){
  if(ans===quizWord.word){btn.classList.add("correct");quizScore++;quizCount++}else{btn.classList.add("wrong");document.querySelectorAll(".choice").forEach(x=>{if(decodeURIComponent(x.dataset.word)===quizWord.word)x.classList.add("correct")});quizCount++}
  setTimeout(startQuiz,650)
 }
-document.getElementById("rate").value=speechRate;document.getElementById("pitch").value=speechPitch;document.getElementById("rateValue").textContent=speechRate.toFixed(2)+"×";document.getElementById("pitchValue").textContent=speechPitch.toFixed(2);
-document.getElementById("rate").oninput=e=>document.getElementById("rateValue").textContent=(+e.target.value).toFixed(2)+"×";
-document.getElementById("pitch").oninput=e=>document.getElementById("pitchValue").textContent=(+e.target.value).toFixed(2);
-document.getElementById("testVoice").onclick=()=>{applyVoiceSettings();speak("Meticulous. She is meticulous when reviewing research papers.");};
-document.getElementById("saveSettings").onclick=()=>{applyVoiceSettings();let g=Math.max(5,Math.min(50,+document.getElementById("dailyGoal").value||10));localStorage.setItem("englishCoachGoal",g);alert("Settings saved ✨");};
+document.getElementById("testVoice").onclick=()=>speak("Meticulous. She is meticulous when reviewing research papers.");
+document.getElementById("saveSettings").onclick=()=>{saveVoiceSettings();let g=Math.max(5,Math.min(50,+document.getElementById("dailyGoal").value||10));localStorage.setItem("englishCoachGoal",g);alert("Settings saved ✨");};
+const goalEl=document.getElementById("dailyGoal");if(goalEl)goalEl.value=localStorage.getItem("englishCoachGoal")||10;
 const savedTheme=localStorage.getItem('englishCoachTheme')||'dark';
 function applyTheme(){const dark=document.body.classList.toggle('dark',savedTheme==='dark');document.getElementById('themeBtn').textContent=dark?'☀️':'🌙'}
 applyTheme();

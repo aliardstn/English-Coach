@@ -1,16 +1,14 @@
-# English Coach — ElevenLabs v4
+# English Coach — v6 Offline Dictionary
 
-This version uses ElevenLabs for natural pronunciation through a Vercel serverless function.
+This version keeps the existing English Coach learning experience and ElevenLabs voice setup, but removes the live Dictionary API dependency for the built-in vocabulary.
 
-## Vercel setup
-1. Add the repository to Vercel.
-2. In **Vercel → Project → Settings → Environment Variables**, add:
-   - Name: `ELEVENLABS_API_KEY`
-   - Value: your ElevenLabs API key
-3. Redeploy the project.
+## What changed
+- 500 core vocabulary words now have definitions stored locally in `index.html`.
+- Existing `localStorage` progress is preserved.
+- Existing user-entered meanings are not overwritten.
+- No `dictionaryapi.dev` request is made for the built-in vocabulary.
+- ElevenLabs pronunciation still uses `/api/tts` and the `ELEVENLABS_API_KEY` Vercel environment variable.
+- The old “Definition will be added when an internet connection is available” message is removed.
 
-The ElevenLabs API key must **not** be placed in `index.html` or committed to GitHub.
-
-The default Voice ID is the one selected for this project: `rsMwNQrvMR1sC0YMsK2a`. You can change it in Settings.
-
-The app calls `/api/tts`, which forwards text to ElevenLabs without exposing the API key to the browser.
+## Deployment
+Upload `index.html`, `api/tts.js`, and this README to the repository root. Keep the ElevenLabs key only in Vercel Environment Variables.
